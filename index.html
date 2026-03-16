@@ -3,76 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr. Omar's Professional CCM Tool</title>
+    <title>Dr. Omar's Professional RCM Suite</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f9; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; margin: 0; padding: 40px 0; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 550px; border-top: 8px solid #1a73e8; }
-        h2 { color: #1a73e8; font-size: 24px; margin-top: 0; margin-bottom: 25px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .section-title { display: block; font-weight: bold; margin-bottom: 10px; color: #5f6368; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
-        .option-group { margin-bottom: 20px; background: #fafafa; padding: 15px; border-radius: 10px; border: 1px solid #eef0f2; }
-        label { display: block; margin: 8px 0; cursor: pointer; font-size: 15px; color: #3c4043; transition: 0.2s; }
-        input[type="radio"], input[type="checkbox"] { margin-right: 12px; transform: scale(1.2); cursor: pointer; }
-        label:hover { color: #1a73e8; }
-        
-        .dme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-        
-        #result-area { margin-top: 25px; }
-        textarea { width: 100%; height: 160px; padding: 15px; border: 2px solid #dadce0; border-radius: 10px; resize: none; font-family: inherit; box-sizing: border-box; background: #fffdeb; font-size: 14.5px; line-height: 1.6; color: #202124; }
-        
-        .btn-group { display: flex; gap: 12px; margin-top: 20px; }
-        button { flex: 1; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f9; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+        .main-wrapper { display: flex; gap: 30px; max-width: 1300px; width: 100%; justify-content: center; align-items: flex-start; }
+        .sidebar { flex: 1; max-width: 250px; padding: 20px; border-radius: 12px; font-size: 13px; line-height: 1.6; margin-top: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .left-sidebar { background: #fff4e5; border-left: 5px solid #ffa000; color: #856404; }
+        .right-sidebar { background: #e8f0fe; border-right: 5px solid #1a73e8; color: #1a73e8; text-align: right; font-weight: bold; }
+        .card { background: white; padding: 0; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 700px; border-top: 8px solid #1a73e8; overflow: hidden; flex-shrink: 0; }
+        .tab-nav { display: flex; background: #f8f9fa; border-bottom: 1px solid #eee; }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: none; cursor: pointer; font-weight: bold; color: #5f6368; transition: 0.3s; font-size: 14px; text-transform: uppercase; }
+        .tab-btn.active { color: #1a73e8; border-bottom: 3px solid #1a73e8; background: white; }
+        .tab-content { padding: 25px; display: none; }
+        .tab-content.active { display: block; }
+        h2 { color: #1a73e8; font-size: 20px; margin-top: 0; margin-bottom: 15px; text-align: center; }
+        .section-title { display: block; font-weight: bold; margin-bottom: 8px; color: #5f6368; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        .option-group { margin-bottom: 15px; background: #fafafa; padding: 12px; border-radius: 10px; border: 1px solid #eef0f2; }
+        label { display: block; margin: 8px 0; cursor: pointer; font-size: 14px; color: #3c4043; }
+        input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #dadce0; border-radius: 5px; margin-top: 4px; box-sizing: border-box; }
+        .med-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+        .med-row input { flex: 1; }
+        .add-med-btn { background: #34a853; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
+        .check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+        textarea { width: 100%; height: 500px; padding: 15px; border: 2px solid #dadce0; border-radius: 10px; resize: none; font-family: inherit; box-sizing: border-box; background: #fffdeb; font-size: 13.5px; line-height: 1.6; color: #202124; }
+        .btn-group { display: flex; gap: 12px; margin-top: 15px; }
+        button.action-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; }
         .copy-btn { background: #1a73e8; color: white; }
-        .copy-btn:hover { background: #1557b0; box-shadow: 0 4px 12px rgba(26,115,232,0.3); }
         .clear-btn { background: #f1f3f4; color: #3c4043; }
-        .clear-btn:hover { background: #e8eaed; }
-        
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #323232; color: white; padding: 12px 30px; border-radius: 50px; display: none; z-index: 1000; font-size: 14px; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #323232; color: white; padding: 12px 30px; border-radius: 50px; display: none; z-index: 1000; font-size: 13px; }
+        @media (max-width: 1150px) { .main-wrapper { flex-direction: column; align-items: center; } .sidebar { max-width: 700px; width: 100%; margin-top: 10px; } .right-sidebar { text-align: left; border-right: none; border-left: 5px solid #1a73e8; } }
     </style>
 </head>
-<body>
+<body onload="initApp()">
 
-<div class="card">
-    <h2>Support 🩺</h2>
-    
-    <div class="option-group">
-        <span class="section-title">1. Ambulation & Falls</span>
-        <label><input type="radio" name="walk" value="can" checked> Can walk</label>
-        <label><input type="radio" name="walk" value="cant"> Can't walk </label>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-        <label><input type="radio" name="fall" value="no" checked> No Falls</label>
-        <label><input type="radio" name="fall" value="yes"> Experience Falls</label>
+<div class="main-wrapper">
+    <div class="sidebar left-sidebar">
+        <h4>⚠️ Clinical Notice</h4>
+        This Helper is a prototype it is made to save you some time only and <b>IT SHOULD NOT BE USED WITHOUT REVIEWING THE FINAL RESULT</b> - Use at your own risk.
+        <br><br>
+        Feel free to contact me if there is any mistake or any adjustment needed.
     </div>
 
-    <div class="option-group">
-        <span class="section-title">2. DME Selection</span>
-        <div class="dme-grid">
-            <label><input type="checkbox" class="dme-item" value="walker"> Walker</label>
-            <label><input type="checkbox" class="dme-item" value="cane"> Cane</label>
-            <label><input type="checkbox" class="dme-item" value="manual wheelchair"> Manual Wheelchair</label>
-            <label><input type="checkbox" class="dme-item" value="corrective lenses"> Corrective Lenses</label>
-            <label><input type="checkbox" class="dme-item" value="hearing aid"> Hearing Aid</label>
-            <label><input type="checkbox" class="dme-item" value="OTC reading glasses"> OTC Reading Glasses</label>
+    <div class="card">
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="openTab(event, 'mds-tab')">MDS - Helper</button>
+            <button class="tab-btn" onclick="openTab(event, 'pn-tab')">PN - Helper</button>
+        </div>
+
+        <div id="mds-tab" class="tab-content active">
+            <h2>Ambulation Support 🩺</h2>
+            <div class="option-group">
+                <span class="section-title">1. Ambulation & Falls</span>
+                <label><input type="radio" name="walk" value="can" checked> Can walk</label>
+                <label><input type="radio" name="walk" value="cant"> Can't walk </label>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+                <label><input type="radio" name="fall" value="no" checked> No Falls</label>
+                <label><input type="radio" name="fall" value="yes"> Experience Falls</label>
+            </div>
+            <div class="option-group">
+                <span class="section-title">2. DME Selection</span>
+                <div class="check-grid">
+                    <label><input type="checkbox" class="dme-item" value="walker"> Walker</label>
+                    <label><input type="checkbox" class="dme-item" value="cane"> Cane</label>
+                    <label><input type="checkbox" class="dme-item" value="manual wheelchair"> Manual Wheelchair</label>
+                    <label><input type="checkbox" class="dme-item" value="corrective lenses"> Corrective Lenses</label>
+                    <label><input type="checkbox" class="dme-item" value="hearing aid"> Hearing Aid</label>
+                    <label><input type="checkbox" class="dme-item" value="OTC reading glasses"> OTC Reading Glasses</label>
+                </div>
+            </div>
+            <textarea id="outputField" readonly placeholder="MDS note will appear here..."></textarea>
+            <div class="btn-group">
+                <button class="action-btn copy-btn" onclick="generateAndCopyMDS()">Generate & Copy MDS</button>
+                <button class="action-btn clear-btn" onclick="resetMDS()">Reset</button>
+            </div>
+        </div>
+
+        <div id="pn-tab" class="tab-content">
+            <h2>Problem Note Helper 📝</h2>
+            <div class="option-group">
+                <span class="section-title">1. Condition Selection</span>
+                <select id="pn-condition" onchange="updateGaps()"></select>
+            </div>
+            <div class="option-group">
+                <span class="section-title">2. Medications</span>
+                <div id="med-container">
+                    <div class="med-row">
+                        <input type="text" class="med-name" placeholder="Medication Name" autocomplete="off">
+                        <input type="text" class="med-dir" placeholder="Direction" autocomplete="off">
+                        <button class="add-med-btn" onclick="addMedRow()">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="option-group">
+                <span class="section-title">3. Lifestyle & Therapy</span>
+                <input type="text" id="pn-diet" placeholder="Diet (e.g. Heart Healthy)" autocomplete="off">
+                <div class="check-grid">
+                    <label><input type="checkbox" id="pt-check"> PT (Physical)</label>
+                    <label><input type="checkbox" id="ot-check"> OT (Occupational)</label>
+                    <label><input type="checkbox" id="rt-check"> RT (Respiratory)</label>
+                    <label><input type="checkbox" id="st-check"> ST (Speech)</label>
+                </div>
+            </div>
+            <div class="option-group" id="gaps-section" style="display:none;">
+                <span class="section-title">4. Gaps in Care</span>
+                <div id="gaps-container"></div>
+            </div>
+            <textarea id="pnOutput" readonly placeholder="Generated Problem Note..."></textarea>
+            <div class="btn-group">
+                <button class="action-btn copy-btn" onclick="generatePN()">Generate & Copy PN</button>
+                <button class="action-btn clear-btn" onclick="resetPN()">Reset</button>
+            </div>
         </div>
     </div>
 
-    <div id="result-area">
-        <span class="section-title">Generated Note</span>
-        <textarea id="outputField" readonly placeholder="Your clinical note will appear here..."></textarea>
-        <div class="btn-group">
-            <button class="copy-btn" onclick="generateAndCopy()">Generate & Copy Note</button>
-            <button class="clear-btn" onclick="resetAll()">Reset All</button>
-        </div>
+    <div class="sidebar right-sidebar">
+        <h4>Author</h4>
+        This Helper Was Done By <br>
+        <span style="font-size: 16px;">Omar Rabie</span>
     </div>
 </div>
 
 <div id="toast" class="toast">Note copied to clipboard! ✅</div>
 
 <script>
-    const outputField = document.getElementById('outputField');
-    const toast = document.getElementById('toast');
+    // --- VERBATIM DATA REPOSITORY ---
+    const conditionData = {
+        "Atrial Fibrillation": {
+            gaps: ["BP is uncontrolled", "BP is not monitored recently", "BP is not monitored regularly", "The patient is not taking statin therapy"],
+            numbers: "- Most recent Pulse: XX on XX/XX/XXXX",
+            education: "Patient education includes:\n-The benefits of adhering to a cardiac diet.\n-How physical activity can lower blood pressure.\n-The importance of anticoagulation to prevent stroke risks associated with AFib.\n-The importance of daily monitoring of blood pressure and heart rate.\n-Recognizing symptoms that require immediate attention, such as severe shortness of breath or chest pain.\n-How lifestyle modifications, like regular physical activity, can improve heart health and reduce AFib symptoms."
+        },
+        "Anemia": {
+            gaps: ["Hemoglobin is not measured", "Serum Ferritin is not measured"],
+            numbers: "- Most recent labs:\nHemoglobin: XX g/dL on XX/XX/XXXX\nSerum Ferritin: XX ng/mL on XX/XX/XXXX",
+            education: "Patient education includes:\n-The importance of consistent supplement intake.\n-Avoiding inhibitors of iron absorption (e.g., tea and coffee with meals).\n-Recognizing symptoms of worsening anemia (e.g., severe fatigue, dizziness, or chest pain).\n-Scheduling follow-up lab work every three months."
+        },
+        "Anxiety": {
+            gaps: ["The patient may not take his medications consistently due to some forgetfulness", "GAD-7 is not assessed recently"],
+            numbers: "- Most recent GAD-7 was XX on XX/XX/XXXX",
+            education: "Patient education includes:\n-Importance of adhering to prescribed medication: Regular intake of medication is essential for managing anxiety effectively.\n-Benefits of using a medication reminder system: Using alarms or pill organizers can help ensure consistent medication use.\n-Significance of attending regular therapy sessions: Consistent participation in therapy sessions is crucial for progress in managing anxiety symptoms."
+        },
+        "General Anxiety Disorder (GAD)": {
+            gaps: ["The patient may not take his medications consistently due to some forgetfulness", "GAD-7 is not assessed recently"],
+            numbers: "- Most recent GAD-7 was XX on XX/XX/XXXX",
+            education: "Patient education includes:\n-Importance of adhering to prescribed medication: Regular intake of medication is essential for managing anxiety effectively.\n-Benefits of using a medication reminder system: Using alarms or pill organizers can help ensure consistent medication use.\n-Significance of attending regular therapy sessions: Consistent participation in therapy sessions is crucial for progress in managing anxiety symptoms."
+        },
+        "Depression": {
+            gaps: ["PHQ is not monitored recently", "The patient may not take his medication consistantly due to some forgetfulness"],
+            numbers: "- Most recent PHQ score was XX on XX/XX/XXXX indicating XXXX depression",
+            education: "Patient education includes:\n-Importance of adhering to prescribed medication: Regular intake of medication is essential for managing depression effectively.\n-Benefits of using a medication reminder system: Using alarms or pill organizers can help ensure consistent medication use.\n-Significance of attending regular therapy sessions: Consistent participation in therapy sessions is crucial for progress in managing depressive symptoms."
+        },
+        "Major Depressive Disorder": {
+            gaps: ["PHQ is not monitored recently", "The patient may not take his medication consistantly due to some forgetfulness"],
+            numbers: "- Most recent PHQ score was XX on XX/XX/XXXX indicating XXXX depression",
+            education: "Patient education includes:\n-Importance of adhering to prescribed medication: Regular intake of medication is essential for managing depression effectively.\n-Benefits of using a medication reminder system: Using alarms or pill organizers can help ensure consistent medication use.\n-Significance of attending regular therapy sessions: Consistent participation in therapy sessions is crucial for progress in managing depressive symptoms."
+        },
+        "Schizophrenia": {
+            gaps: ["The patient may not take his medications consistently due to some forgetfulness"],
+            numbers: "- Most recent MDQ was XX on XX/XX/XXXX",
+            education: "Patient education includes:\n-Importance of adhering to prescribed medication: Regular intake of medication is essential for managing Schizophrenia effectively.\n-Benefits of using a medication reminder system: Using alarms or pill organizers can help ensure consistent medication use.\n-Significance of attending regular therapy sessions: Consistent participation in therapy sessions is crucial for progress in managing Schizophrenia."
+        },
+        "Cardiac Conditions": {
+            gaps: ["The patient is not following Statin Therapy", "BP is uncontrolled", "BP is not monitored regularly", "BP is not monitored recently", "The patient is not following DASH or Cardiac Diet"],
+            numbers: "- Most recent BP: XX mmHg on XX/XX/XXXX\n- Most recent KFTs on XX/XX/XXXX were:\nBUN: XX mg/dL, Creatinine: XX mg/dL\neGFR: XX mL/min/1.73m2\n- Most recent Lipid Panel on XX/XX/XXXX were:\nCholesterol: XX mg/dL, HDL: XX mg/dL\nTriglycerides: XX mg/dL, LDL: XX mg/dL",
+            education: "Patient education includes:\n-Importance of adhering to medications: Consistent use of antihypertensive medications is crucial to manage blood pressure and prevent complications.\n-Benefits of incorporating a medication reminder system: Tools such as alarms, pill organizers, or apps can help improve medication adherence.\n-Goal blood pressure of <140/90 mmHg: Maintaining this target can reduce the risk of cardiovascular events and improve overall health."
+        },
+        "Coronary Artery Disease (CAD)": {
+            gaps: ["The patient is not following Statin Therapy", "BP is uncontrolled", "BP is not monitored regularly", "BP is not monitored recently", "The patient is not following DASH or Cardiac Diet"],
+            numbers: "- Most recent BP: XX mmHg on XX/XX/XXXX\n- Most recent KFTs on XX/XX/XXXX were:\nBUN: XX mg/dL, Creatinine: XX mg/dL\neGFR: XX mL/min/1.73m2\n- Most recent Lipid Panel on XX/XX/XXXX were:\nCholesterol: XX mg/dL, HDL: XX mg/dL\nTriglycerides: XX mg/dL, LDL: XX mg/dL",
+            education: "Patient education includes:\n-Importance of adhering to medications: Consistent use of anticoagulant medications and lipids lowering drugs is crucial to manage the condition and prevent complications.\n-Benefits of incorporating a medication reminder system: Tools such as alarms, pill organizers, or apps can help improve medication adherence.\n-Goal blood pressure of <130/80 mmHg and HR: 50-70 bpm: Maintaining this target can reduce the risk of cardiovascular events and improve overall health. \n-Regular monitoring of specific laboratory parameters is crucial in managing CAD\n-Educate the patient about the importance of Lifestyle Modifications including:\n-Diet: Encourage a heart-healthy diet rich in fruits, vegetables, whole grains, lean proteins, and low in saturated fats, trans fats, and sodium.\n-Physical Activity: Advise at least 150 minutes of moderate-intensity aerobic exercise per week, tailored to the patient's abilities.\n-Smoking Cessation: Strongly recommend quitting smoking and provide resources for cessation programs.\n-Weight Management: Promote achieving and maintaining a healthy weight to reduce cardiac workload."
+        },
+        "Atherosclerotic Heart Disease (ASHD)": {
+            gaps: ["The patient is not following Statin Therapy", "BP is uncontrolled", "BP is not monitored regularly", "BP is not monitored recently", "The patient is not following DASH or Cardiac Diet"],
+            numbers: "- Most recent BP: XX mmHg on XX/XX/XXXX\n- Most recent KFTs on XX/XX/XXXX were:\nBUN: XX mg/dL, Creatinine: XX mg/dL\neGFR: XX mL/min/1.73m2\n- Most recent Lipid Panel on XX/XX/XXXX were:\nCholesterol: XX mg/dL, HDL: XX mg/dL\nTriglycerides: XX mg/dL, LDL: XX mg/dL",
+            education: "Patient education includes:\n-Importance of adhering to medications: Consistent use of anticoagulant medications and lipids lowering drugs is crucial to manage the condition and prevent complications.\n-Benefits of incorporating a medication reminder system: Tools such as alarms, pill organizers, or apps can help improve medication adherence.\n-Goal blood pressure of <130/80 mmHg and HR: 50-70 bpm: Maintaining this target can reduce the risk of cardiovascular events and improve overall health. \n-Regular monitoring of specific laboratory parameters is crucial in managing CAD\n-Educate the patient about the importance of Lifestyle Modifications including:\n-Diet: Encourage a heart-healthy diet rich in fruits, vegetables, whole grains, lean proteins, and low in saturated fats, trans fats, and sodium.\n-Physical Activity: Advise at least 150 minutes of moderate-intensity aerobic exercise per week, tailored to the patient's abilities.\n-Smoking Cessation: Strongly recommend quitting smoking and provide resources for cessation programs.\n-Weight Management: Promote achieving and maintaining a healthy weight to reduce cardiac workload."
+        },
+        "Dementia": {
+            gaps: ["Vitamin D 25-OH is not monitored recently"],
+            numbers: "- Most recent Vitamin D 25-OH: XX ng/mL on XX/XX/XXXX",
+            education: "Patient education includes:\nWhen to Seek Help: Contact a healthcare provider if you experiences: Significant memory loss affecting daily life, Behavioral changes that are out of character., Difficulty completing routine tasks.\nCognitive Therapies: Engaging in memory exercises, puzzles, and structured activities."
+        },
+        "Alzheimer's Disease": {
+            gaps: ["Vitamin D 25-OH is not monitored recently"],
+            numbers: "- Most recent Vitamin D 25-OH: XX ng/mL on XX/XX/XXXX",
+            education: "Patient education includes:\nWhen to Seek Help: Contact a healthcare provider if you experiences: Significant memory loss affecting daily life, Behavioral changes that are out of character., Difficulty completing routine tasks.\nCognitive Therapies: Engaging in memory exercises, puzzles, and structured activities."
+        },
+        "Seizures": {
+            gaps: [],
+            numbers: "",
+            education: "Patient education includes:\n-Common Triggers to Avoid: Sleep deprivation, Stress, Alcohol or recreational drugs, Flashing lights (for photosensitive epilepsy), Missed medications, Hormonal changes\n-Healthy Habits: Maintain a regular sleep schedule, Eat a balanced diet., Engage in regular, moderate exercise.\n-When to Seek Help: Seizures lasting longer than 5 minutes (status epilepticus), Repeated seizures without recovery in between, Injury sustained during a seizure, Breathing difficulties post-seizure."
+        },
+        "Epilepsy": {
+            gaps: [],
+            numbers: "",
+            education: "Patient education includes:\n-Common Triggers to Avoid: Sleep deprivation, Stress, Alcohol or recreational drugs, Flashing lights (for photosensitive epilepsy), Missed medications, Hormonal changes\n-Healthy Habits: Maintain a regular sleep schedule, Eat a balanced diet., Engage in regular, moderate exercise.\n-When to Seek Help: Seizures lasting longer than 5 minutes (status epilepticus), Repeated seizures without recovery in between, Injury sustained during a seizure, Breathing difficulties post-seizure."
+        },
+        "Chronic Obstructive Pulmonary Disease (COPD)": {
+            gaps: ["Spirometry testing was not used in the assessment and diagnosis of COPD", "The patient didn't take pneumococcal vaccination", "Oxygen Saturation is less than 88%"],
+            numbers: "- Most recent O2: XX% on XX/XX/XXXX\n- Pulmonary Function Test is not done",
+            education: "Patient education includes:\n-Proper inhaler technique: Demonstrate correct inhaler use and provide written instructions to ensure effective medication delivery.\n-Benefits of pulmonary rehabilitation: Pulmonary rehabilitation can improve lung function and overall health, reducing COPD symptoms.\n-Importance of avoiding smoking and air pollutants: Avoiding these triggers can prevent exacerbations and improve breathing."
+        },
+        "ASTHMA": {
+            gaps: ["Spirometry testing was not used in the assessment and diagnosis of ASTHMA", "The patient didn't take pneumococcal vaccination", "Oxygen Saturation is less than 88%"],
+            numbers: "- Most recent O2: XX% on XX/XX/XXXX\n- Pulmonary Function Test is not done",
+            education: "Patient education includes:\n-Proper inhaler technique: Demonstrate correct inhaler use and provide written instructions to ensure effective medication delivery.\n-Benefits of pulmonary rehabilitation: Pulmonary rehabilitation can improve lung function and overall health, reducing ASTHMA symptoms.\n-Importance of avoiding smoking and air pollutants: Avoiding these triggers can prevent exacerbations and improve breathing."
+        },
+        "Type 2 Diabetes Mellitus (T2DM)": {
+            gaps: ["The patient is not following Statin Therapy", "BP is uncontrolled", "BP is not monitored regularly", "BP is not monitored recently", "HbA1c is not monitored recently", "HbA1c is uncontrolled", "FBG is uncontrolled", "FBG is not monitored recently"],
+            numbers: "- Most recent Weight: XX Lbs. on XX/XX/XXXX\n- Most recent labs:\nHbA1c: XX% on XX/XX/XXXX\nFBG: XX mg/DL on XX/XX/XXXX",
+            education: "Patient education includes:\n-Importance of regular blood glucose monitoring: Consistent monitoring helps manage blood sugar levels and prevent complications.\n-Benefits of a balanced diet with controlled carbohydrate intake: Proper diet can help maintain stable blood glucose levels and improve overall health.\n-Significance of maintaining an HbA1c goal of <7%: Achieving this target can reduce the risk of diabetes-related complications."
+        },
+        "Benign Prostatic Hyperplasia (BPH)": {
+            gaps: ["PSA is not monitored recently"],
+            numbers: "- Most recent PSA: XX ng/mL on XX/XX/XXXX\n- IPSS is not monitored",
+            education: "Patient education includes:\n-Benefits of pelvic floor exercises: These exercises can help improve bladder control and reduce urinary symptoms.\n-Reducing caffeine and alcohol intake: Limiting these substances can decrease urinary urgency and frequency.\n-Importance of regular follow-up with a urologist: Regular check-ups help monitor the condition and adjust treatment as necessary."
+        },
+        "Gastro-Esophageal Reflux Disease (GERD)": {
+            gaps: ["The patient is obese"],
+            numbers: "- Most recent Weigh: XX Lbs., BMI: XX on XX/XX/XXXX",
+            education: "Patient education includes:\n-The importance of elevating the head of the bed to reduce nighttime symptoms.\n-Avoiding meals at least 2-3 hours before bedtime.\n-Signs of complications such as difficulty swallowing or persistent chest discomfort that require prompt evaluation."
+        },
+        "Congestive Heart Failure (CHF)": {
+            gaps: ["The patient is not following Statin Therapy", "BP is uncontrolled", "BP is not monitored regularly", "BP is not monitored recently", "Lipid Panel is not monitored recently"],
+            numbers: "- Most recent readings:\nBP: XX mmHg on XX/XX/XXXX\nWeight: XX Lbs. on XX/XX/XXXX\nO2: XX% on XX/XX/XXXX\nEjection Fraction: XX% on XX/XX/XXXX\n- Most recent KFTs on XX/XX/XXXX were:\nBUN: XX mg/dL, Creatinine: XX mg/dL\neGFR: XX mL/min/1.73m2\n- Most recent Lipid Panel on XX/XX/XXXX were:\nCholesterol: XX mg/dL, HDL: XX mg/dL\nTriglycerides: XX mg/dL, LDL: XX mg/dL",
+            education: "Patient education includes:\n-Importance of adhering to fluid restrictions: Limiting fluid intake helps prevent fluid overload and exacerbation of heart failure.\n-Benefits of daily weight monitoring: Tracking weight daily can detect fluid retention early, allowing timely intervention.\n-Strategies for managing thirst: Suggest alternatives like ice chips or sugar-free gum to help manage thirst."
+        },
+        "Hyperlipidemia (HLD)": {
+            gaps: ["BP is uncontrolled", "BP is not monitored regularly", "BP is not monitored recently", "Lipid Panel is not monitored recently", "Lipid Panel is uncontrolled"],
+            numbers: "- Most recent BP: XX mmHg on XX/XX/XXXX\n- Most recent Lipid Panel on XX/XX/XXXX were:\nCholesterol: XX mg/dL, HDL: XX mg/dL\nTriglycerides: XX mg/dL, LDL: XX mg/dL",
+            education: "Patient education includes:\n-Importance of adhering to prescribed statin therapy.\n-Strategies for reducing saturated fat intake and increasing fiber in the diet.\n-Regular cholesterol monitoring and its role in preventing cardiovascular complications."
+        },
+        "Hypertension (HTN)": {
+            gaps: ["BP is uncontrolled", "BP is not monitored regularly", "BP is not monitored recently", "KFTs are not monitored recently", "KFTs are uncontrolled", "The patient is not following NAS or Cardiac Diet"],
+            numbers: "- Most recent BP: XX mmHg on XX/XX/XXXX\n- Most recent KFTs on XX/XX/XXXX were:\nBUN: XX mg/dL, Creatinine: XX mg/dL\neGFR: XX mL/min/1.73m2",
+            education: "Patient education includes:\n-Benefits of adhering to a cardiac diet.\n-How physical activity can lower blood pressure."
+        },
+        "Chronic Kidney Disease (CKD)": {
+            gaps: ["BP is uncontrolled", "BP is not monitored regularly", "BP is not monitored recently", "No Medical Attention for Nephropathy"],
+            numbers: "- Most recent readings:\nBP: XX mmHg on XX/XX/XXXX\nWeight: XX Lbs. on XX/XX/XXXX\n- Most recent KFTs on XX/XX/XXXX were:\nBUN: XX mg/dL, Creatinine: XX mg/dL\neGFR: XX mL/min/1.73m2",
+            education: "Patient education includes:\n-Importance of following a renal diet: Adhering to a renal diet can slow the progression of kidney disease and prevent complications.\n-Benefits of avoiding high-potassium foods: Reducing high-potassium foods can help maintain safe potassium levels and prevent cardiac issues.\n-Significance of regular monitoring and follow-up appointments: Regular check-ups and lab tests are crucial for monitoring kidney function and adjusting treatment as needed."
+        },
+        "Pain": {
+            gaps: ["-THE NEGATIVE FROM MDS HERE", "-No recent Functional Status Assessment", "-Pain Assessment is not recent"],
+            numbers: "- Most recent readings:\nPain Level: XX on XX/XX/XXXX\nPHQ Score: XX on XX/XX/XXXX indicating XXXXX depression",
+            education: "Patient education includes:\n-Importance of adhering to the exercise routine: Regular exercise can help manage pain and improve function.\n-Strategies to manage pain during exercise: Discuss pain management techniques and modifications to exercises.\n-Benefits of using ergonomic furniture: Proper furniture can help reduce strain and prevent exacerbation of pain."
+        },
+        "Osteoarthritis": {
+            gaps: ["-THE NEGATIVE FROM MDS HERE", "-No recent Functional Status Assessment", "-Pain Assessment is not recent"],
+            numbers: "- Most recent readings:\nPain Level: XX on XX/XX/XXXX\nPHQ Score: XX on XX/XX/XXXX indicating XXXXX depression",
+            education: "Patient education includes:\n-Importance of adhering to the exercise routine: Regular exercise can help manage pain and improve function.\n-Strategies to manage pain during exercise: Discuss pain management techniques and modifications to exercises.\n-Benefits of using ergonomic furniture: Proper furniture can help reduce strain and prevent exacerbation of pain."
+        },
+        "Hypothyroidism": {
+            gaps: ["-The patient didn't take pneumococal Vaccine", "-The patient didn't take influenza Vaccine", "- T3 is not monitored recently", "-T4 is not monitored recently", "-TSH is not monitored recently"],
+            numbers: "- Most recent BP: XX mmHg on XX/XX/XXXX\n- Most recent labs:\nT3: XX on XX/XX/XXXX\nT4: XX on XX/XX/XXXX\nTSH: XX mIU/L on XX/XX/XXXX\n- DEXA SCAN is not done",
+            education: "Patient education includes:\n-Importance of medication adherence: Regular medication use is essential for maintaining thyroid function and preventing symptoms.\n-Benefits of using a medication reminder system: Tools like alarms or pill organizers can help improve adherence.\n-Significance of regular thyroid function tests: Regular monitoring helps ensure the effectiveness of treatment and allows for dose adjustments as needed."
+        }
+    };
 
-    function generateAndCopy() {
-        // 1. منطق الحركة والوقوع
+    function initApp() {
+        const select = document.getElementById('pn-condition');
+        const sortedKeys = Object.keys(conditionData).sort();
+        select.innerHTML = '<option value="">-- Select Condition --</option>';
+        sortedKeys.forEach(key => {
+            const opt = document.createElement('option');
+            opt.value = key; opt.textContent = key;
+            select.appendChild(opt);
+        });
+    }
+
+    function openTab(evt, tabId) {
+        let i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) tablinks[i].className = tablinks[i].className.replace(" active", "");
+        document.getElementById(tabId).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    function generateAndCopyMDS() {
         const canWalk = document.querySelector('input[name="walk"]:checked').value === 'can';
         const doesFall = document.querySelector('input[name="fall"]:checked').value === 'yes';
         let ambulationPart = "";
@@ -83,55 +292,142 @@
             let walkText = canWalk 
                 ? "The patient has no difficulty with ambulation and moving around. They are able to walk without assistance" 
                 : "The patient has significant difficulty with ambulation and moving around. They are not able to walk without assistance";
-
             let fallText = doesFall 
                 ? "do experience falls and balance issues" 
                 : "do not experience any falls or balance issues";
-
             ambulationPart = `${walkText} and ${fallText}.`;
         }
 
-        // 2. منطق DME (مع مراعاة بداية الجملة بحرف كبير)
         const selectedDMEs = Array.from(document.querySelectorAll('.dme-item:checked')).map(el => el.value);
         let dmePart = "";
-
         if (selectedDMEs.length === 0) {
             dmePart = "The patient doesn't use any DME.";
         } else {
-            let formattedList = "";
-            if (selectedDMEs.length === 1) {
-                formattedList = selectedDMEs[0];
-            } else if (selectedDMEs.length === 2) {
-                formattedList = selectedDMEs.join(" and ");
-            } else {
-                const lastItem = selectedDMEs.pop();
-                formattedList = selectedDMEs.join(", ") + " and " + lastItem;
+            let listStr = "";
+            if (selectedDMEs.length === 1) listStr = selectedDMEs[0];
+            else if (selectedDMEs.length === 2) listStr = selectedDMEs.join(" and ");
+            else {
+                const last = selectedDMEs.pop();
+                listStr = selectedDMEs.join(", ") + " and " + last;
             }
-            dmePart = `Patient uses DMEs such as: ${formattedList}.`;
+            dmePart = `Patient uses DMEs such as: ${listStr}.`;
         }
-
-        // 3. الدمج مع فصل الفقرات بسطر جديد
-        const finalNote = ambulationPart + "\n\n" + dmePart;
-        outputField.value = finalNote;
-
-        // نسخ تلقائي
-        outputField.select();
-        document.execCommand('copy');
-        showToast();
+        document.getElementById('outputField').value = ambulationPart + "\n\n" + dmePart;
+        copyToClipboard('outputField');
     }
 
-    function resetAll() {
+    function resetMDS() {
         document.querySelector('input[name="walk"][value="can"]').checked = true;
         document.querySelector('input[name="fall"][value="no"]').checked = true;
         document.querySelectorAll('.dme-item').forEach(el => el.checked = false);
-        outputField.value = '';
+        document.getElementById('outputField').value = '';
     }
 
-    function showToast() {
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    function addMedRow() {
+        const container = document.getElementById('med-container');
+        const row = document.createElement('div');
+        row.className = 'med-row';
+        row.innerHTML = `<input type="text" class="med-name" placeholder="Medication Name" autocomplete="off"> <input type="text" class="med-dir" placeholder="Direction" autocomplete="off">`;
+        container.appendChild(row);
+    }
+
+    function updateGaps() {
+        const cond = document.getElementById('pn-condition').value;
+        const container = document.getElementById('gaps-container');
+        container.innerHTML = "";
+        if (cond && conditionData[cond] && conditionData[cond].gaps.length > 0) {
+            document.getElementById('gaps-section').style.display = "block";
+            conditionData[cond].gaps.forEach(gap => {
+                container.innerHTML += `<label><input type="checkbox" class="gap-item" value="${gap}"> ${gap}</label>`;
+            });
+        } else { document.getElementById('gaps-section').style.display = "none"; }
+    }
+
+    function generatePN() {
+        const cond = document.getElementById('pn-condition').value;
+        if (!cond) return alert("Select a condition");
+        const meds = Array.from(document.querySelectorAll('.med-row')).map(row => {
+            const name = row.querySelector('.med-name').value;
+            const dir = row.querySelector('.med-dir').value;
+            return name ? `${name} - ${dir}` : null;
+        }).filter(Boolean);
+        const diet = document.getElementById('pn-diet').value || "standard diet";
+        const tList = [
+            document.getElementById('pt-check').checked ? "Physical" : "",
+            document.getElementById('ot-check').checked ? "Occupational" : "",
+            document.getElementById('rt-check').checked ? "Respiratory" : "",
+            document.getElementById('st-check').checked ? "Speech" : ""
+        ].filter(Boolean);
+        let tStr = tList.length === 0 ? "lifestyle modifications" : (tList.length === 1 ? tList[0] + " therapy" : tList.slice(0, -1).join(", ") + " and " + tList.slice(-1) + " therapies");
+
+        const selectedGaps = Array.from(document.querySelectorAll('.gap-item:checked')).map(el => el.value);
+        let gapLine = "";
+        if (selectedGaps.length === 0) {
+            gapLine = "No current gaps in care.\n";
+        } else {
+            let finalItems = [];
+            let tempGaps = [...selectedGaps];
+            function processPattern(prefix, hasReg = false) {
+                let matches = tempGaps.filter(g => g.includes(prefix));
+                if (matches.length === 0) return;
+                let uncontrolled = matches.some(g => g.includes("uncontrolled"));
+                let recently = matches.some(g => g.includes("recently"));
+                let regularly = hasReg && matches.some(g => g.includes("regularly"));
+                let combined = uncontrolled ? `${prefix} is uncontrolled` : prefix;
+                if (recently || regularly) {
+                    let text = " is not monitored ";
+                    if (recently && regularly) text += "recently or regularly";
+                    else if (recently) text += "recently";
+                    else text += "regularly";
+                    combined += (uncontrolled ? " and" : "") + text;
+                }
+                finalItems.push(combined);
+                matches.forEach(m => tempGaps.splice(tempGaps.indexOf(m), 1));
+            }
+            processPattern("BP", true);
+            processPattern("HbA1c", false);
+            processPattern("FBG", false);
+            processPattern("Lipid Panel", false);
+            processPattern("KFTs", false);
+            
+            let thyMatches = tempGaps.filter(g => (g.includes("T3") || g.includes("T4") || g.includes("TSH")) && g.includes("not monitored"));
+            if (thyMatches.length > 0) {
+                let codes = thyMatches.map(t => t.match(/T3|T4|TSH/)[0]);
+                finalItems.push(codes.join(", ").replace(/, ([^,]*)$/, ' and $1') + " are not monitored recently");
+                thyMatches.forEach(m => tempGaps.splice(tempGaps.indexOf(m), 1));
+            }
+            let vaxMatches = tempGaps.filter(g => g.toLowerCase().includes("vaccine"));
+            if (vaxMatches.length > 1) {
+                finalItems.push("The patient didn't take pneumococcal or influenza vaccines");
+                vaxMatches.forEach(m => tempGaps.splice(tempGaps.indexOf(m), 1));
+            }
+            finalItems.push(...tempGaps);
+            gapLine = `Current gaps in care: ${finalItems.join(", ")}.\n`;
+        }
+
+        let note = `${cond.toUpperCase()}: Which is currently being managed with ${meds.length ? meds.join(", ") : "prescribed medications"} and lifestyle modifications including ${diet} and engaging in ${tStr}.\n`;
+        note += gapLine + "\n";
+        if (conditionData[cond].numbers) note += `${conditionData[cond].numbers}\n\n`;
+        note += `${conditionData[cond].education}\n\n`;
+        note += `This care plan has been reviewed and shared with the facility’s medical team, nursing staff, and any direct caregiver involved in the patient’s care.`;
+        document.getElementById('pnOutput').value = note;
+        copyToClipboard('pnOutput');
+    }
+
+    function resetPN() {
+        document.getElementById('pn-condition').value = "";
+        document.getElementById('med-container').innerHTML = `<div class="med-row"><input type="text" class="med-name" placeholder="Medication Name" autocomplete="off"> <input type="text" class="med-dir" placeholder="Direction" autocomplete="off"> <button class="add-med-btn" onclick="addMedRow()">+</button></div>`;
+        document.getElementById('pn-diet').value = "";
+        ['pt','ot','rt','st'].forEach(id => document.getElementById(id+'-check').checked = false);
+        document.getElementById('gaps-section').style.display = "none";
+        document.getElementById('pnOutput').value = "";
+    }
+
+    function copyToClipboard(id) {
+        const el = document.getElementById(id); el.select(); document.execCommand('copy');
+        const toast = document.getElementById('toast'); toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 2000);
     }
 </script>
-
 </body>
 </html>
