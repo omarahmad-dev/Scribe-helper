@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr. Omar's Professional RCM Suite</title>
+    <title> BrightWell Helper </title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f9; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background-color: #f4f7f9; 
+            margin: 0; 
+            padding: 20px; 
+            padding-bottom: 500px; /* Space added for double-screen setup */
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            min-height: 100vh; 
+        }
         .main-wrapper { display: flex; gap: 30px; max-width: 1300px; width: 100%; justify-content: center; align-items: flex-start; }
         .sidebar { flex: 1; max-width: 250px; padding: 20px; border-radius: 12px; font-size: 13px; line-height: 1.6; margin-top: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .left-sidebar { background: #fff4e5; border-left: 5px solid #ffa000; color: #856404; }
@@ -51,10 +61,11 @@
         </div>
 
         <div id="mds-tab" class="tab-content active">
-            <h2>Ambulation Support 🩺</h2>
+            <h2>MDS HELPER 🩺</h2>
             <div class="option-group">
                 <span class="section-title">1. Ambulation & Falls</span>
                 <label><input type="radio" name="walk" value="can" checked> Can walk</label>
+                <label><input type="radio" name="walk" value="moderate"> Walk moderately</label>
                 <label><input type="radio" name="walk" value="cant"> Can't walk </label>
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
                 <label><input type="radio" name="fall" value="no" checked> No Falls</label>
@@ -66,9 +77,18 @@
                     <label><input type="checkbox" class="dme-item" value="walker"> Walker</label>
                     <label><input type="checkbox" class="dme-item" value="cane"> Cane</label>
                     <label><input type="checkbox" class="dme-item" value="manual wheelchair"> Manual Wheelchair</label>
+                    <label><input type="checkbox" class="dme-item" value="Electric wheelchair"> Electric Wheelchair</label>
+                    <label><input type="checkbox" class="dme-item" value="Mechanical Lift"> Mechanical Lift</label>
                     <label><input type="checkbox" class="dme-item" value="corrective lenses"> Corrective Lenses</label>
                     <label><input type="checkbox" class="dme-item" value="hearing aid"> Hearing Aid</label>
                     <label><input type="checkbox" class="dme-item" value="OTC reading glasses"> OTC Reading Glasses</label>
+                </div>
+            </div>
+            <div class="option-group">
+                <label><input type="checkbox" id="finalized-check" onchange="toggleDateInput()"> <b>| Most Recent Finalized Template |</b></label>
+                <div id="date-input-container" style="display:none; margin-top:10px;">
+                    <span class="section-title">Assessment Date</span>
+                    <input type="text" id="mds-date" placeholder="XX/XX/XXXX" autocomplete="off">
                 </div>
             </div>
             <textarea id="outputField" readonly placeholder="MDS note will appear here..."></textarea>
@@ -281,17 +301,31 @@
         evt.currentTarget.className += " active";
     }
 
+    function toggleDateInput() {
+        const check = document.getElementById('finalized-check');
+        const container = document.getElementById('date-input-container');
+        container.style.display = check.checked ? 'block' : 'none';
+    }
+
     function generateAndCopyMDS() {
-        const canWalk = document.querySelector('input[name="walk"]:checked').value === 'can';
+        const walkVal = document.querySelector('input[name="walk"]:checked').value;
         const doesFall = document.querySelector('input[name="fall"]:checked').value === 'yes';
+        const isFinalized = document.getElementById('finalized-check').checked;
+        const mdsDate = document.getElementById('mds-date').value || "XX/XX/XXXX";
         let ambulationPart = "";
 
-        if (canWalk && doesFall) {
+        if (walkVal === 'can' && doesFall) {
             ambulationPart = "Patient demonstrates independent ambulation at assessed distances, but fall risk is identified based on history of falls and medication use.";
         } else {
-            let walkText = canWalk 
-                ? "The patient has no difficulty with ambulation and moving around. They are able to walk without assistance" 
-                : "The patient has significant difficulty with ambulation and moving around. They are not able to walk without assistance";
+            let walkText = "";
+            if (walkVal === 'can') {
+                walkText = "The patient has no difficulty with ambulation and moving around. They are able to walk without assistance";
+            } else if (walkVal === 'moderate') {
+                walkText = "The patient has moderate difficulty with ambulation and moving around. They are able to walk with assistance";
+            } else {
+                walkText = "The patient has significant difficulty with ambulation and moving around. They are not able to walk without assistance";
+            }
+
             let fallText = doesFall 
                 ? "do experience falls and balance issues" 
                 : "do not experience any falls or balance issues";
@@ -312,7 +346,16 @@
             }
             dmePart = `Patient uses DMEs such as: ${listStr}.`;
         }
-        document.getElementById('outputField').value = ambulationPart + "\n\n" + dmePart;
+
+        let finalOutput = "";
+        if (isFinalized) {
+            let findings = ambulationPart + " " + dmePart;
+            finalOutput = `The most recent finalized MDS assessment (dated ${mdsDate}) was reviewed for mobility deficits and DME needs. This assessment was previously unavailable due to being in progress during the last follow-up visit. Relevant findings include ${findings}, which will now be incorporated into care planning and follow-up.`;
+        } else {
+            finalOutput = ambulationPart + "\n\n" + dmePart;
+        }
+
+        document.getElementById('outputField').value = finalOutput;
         copyToClipboard('outputField');
     }
 
@@ -320,6 +363,9 @@
         document.querySelector('input[name="walk"][value="can"]').checked = true;
         document.querySelector('input[name="fall"][value="no"]').checked = true;
         document.querySelectorAll('.dme-item').forEach(el => el.checked = false);
+        document.getElementById('finalized-check').checked = false;
+        document.getElementById('mds-date').value = '';
+        document.getElementById('date-input-container').style.display = 'none';
         document.getElementById('outputField').value = '';
     }
 
@@ -358,7 +404,7 @@
             document.getElementById('rt-check').checked ? "Respiratory" : "",
             document.getElementById('st-check').checked ? "Speech" : ""
         ].filter(Boolean);
-        let tStr = tList.length === 0 ? "lifestyle modifications" : (tList.length === 1 ? tList[0] + " therapy" : tList.slice(0, -1).join(", ") + " and " + tList.slice(-1) + " therapies");
+        let tStr = tList.length === 0 ? "" : " and engaging in " + (tList.length === 1 ? tList[0] + " therapy" : tList.slice(0, -1).join(", ") + " and " + tList.slice(-1) + " therapies");
 
         const selectedGaps = Array.from(document.querySelectorAll('.gap-item:checked')).map(el => el.value);
         let gapLine = "";
@@ -405,7 +451,7 @@
             gapLine = `Current gaps in care: ${finalItems.join(", ")}.\n`;
         }
 
-        let note = `${cond.toUpperCase()}: Which is currently being managed with ${meds.length ? meds.join(", ") : "prescribed medications"} and lifestyle modifications including ${diet} and engaging in ${tStr}.\n`;
+        let note = `${cond.toUpperCase()}: Which is currently being managed with ${meds.length ? meds.join(", ") : "prescribed medications"} and lifestyle modifications including ${diet}${tStr}.\n`;
         note += gapLine + "\n";
         if (conditionData[cond].numbers) note += `${conditionData[cond].numbers}\n\n`;
         note += `${conditionData[cond].education}\n\n`;
